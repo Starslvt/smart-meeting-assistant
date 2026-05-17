@@ -47,7 +47,9 @@ Responde en español, de forma clara y organizada."""
         )
         
         if response.status_code == 200:
-            return response.json()['response'].strip()
+            result = response.json()['response'].strip()
+            result = result.replace('**', '')
+            return result
         else:
             return None
             

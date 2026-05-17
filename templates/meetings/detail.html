@@ -24,7 +24,7 @@
         <div class="card p-4 h-100">
             <h5 class="fw-semibold mb-3"><i class="bi bi-stars me-2"></i>Resumen IA</h5>
             {% if meeting.summary %}
-                <p class="text-muted">{{ meeting.summary }}</p>
+                <p class="text-muted">{{ meeting.summary|linebreaks }}</p>
             {% else %}
                 <p class="text-muted fst-italic">Sin resumen todavía.</p>
             {% endif %}
