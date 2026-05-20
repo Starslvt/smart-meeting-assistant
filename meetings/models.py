@@ -13,7 +13,7 @@ class Meeting(models.Model):
     transcription = models.TextField(blank=True, default='')
     summary = models.TextField(blank=True, default='')
 
-    # Estado del procesamiento
+    #status del procesamiento obviamente duh
     STATUS_CHOICES = [
         ('pending', 'Pendiente'),
         ('processing', 'Procesando'),

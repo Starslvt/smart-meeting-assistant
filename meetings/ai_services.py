@@ -1,6 +1,7 @@
 import whisper
 import requests
 
+
 def transcribe_audio(audio_path):
     """
     Transcribe un archivo de audio usando Whisper local.

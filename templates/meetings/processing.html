@@ -1,0 +1,81 @@
+{% extends 'meetings/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center py-5">
+        
+        <div class="card p-5">
+            <div class="mb-4">
+                <div class="spinner-border text-primary mb-3" 
+                     style="width: 3.5rem; height: 3.5rem;" role="status">
+                </div>
+                <h3 class="fw-bold">Procesando audio, por favor espere</h3>
+                <p class="text-muted">{{ meeting.title }}</p>
+            </div>
+
+            <!-- Barra de progreso animada -->
+            <div class="progress mb-4" style="height: 10px; border-radius: 10px;">
+                <div id="progress-bar" 
+                     class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                     style="width: 0%">
+                </div>
+            </div>
+
+            <!-- Mensaje de estado -->
+            <p id="status-msg" class="text-muted mb-0">
+                <i class="bi bi-mic me-2"></i>Iniciando transcripción.  Esto puede tardar un poco...
+            </p>
+            <p class="text-muted small mt-2">
+                Esto puede tardar 1-5 minutos según el largo del audio
+            </p>
+        </div>
+
+    </div>
+</div>
+<script>
+const processUrl = "{% url 'process_meeting' meeting.pk %}";
+const detailUrl = "{% url 'detail' meeting.pk %}";
+
+const messages = [
+    { pct: 15, msg: '<i class="bi bi-mic me-2"></i>Cargando modelo Whisper...' },
+    { pct: 35, msg: '<i class="bi bi-soundwave me-2"></i>Analizando el audio...' },
+    { pct: 60, msg: '<i class="bi bi-chat-text me-2"></i>Transcribiendo el contenido...' },
+    { pct: 80, msg: '<i class="bi bi-stars me-2"></i>Generando resumen con IA...' },
+    { pct: 92, msg: '<i class="bi bi-check2-circle me-2"></i>Finalizando...' },
+];
+
+const bar = document.getElementById('progress-bar');
+const msg = document.getElementById('status-msg');
+let step = 0;
+
+// Avanzar barra visualmente cada 18 segundos
+bar.style.width = messages[0].pct + '%';
+msg.innerHTML = messages[0].msg;
+step = 1;
+
+const barInterval = setInterval(() => {
+    if (step < messages.length) {
+        bar.style.width = messages[step].pct + '%';
+        msg.innerHTML = messages[step].msg;
+        step++;
+    }
+}, 18000);
+
+// Llamar al endpoint que hace el trabajo real
+fetch(processUrl, { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+        clearInterval(barInterval);
+        bar.style.width = '100%';
+        bar.classList.remove('progress-bar-animated');
+        bar.classList.add('bg-success');
+        msg.innerHTML = '<i class="bi bi-check-circle-fill me-2 text-success"></i>Completado. Redirigiendo...';
+        setTimeout(() => { window.location.href = detailUrl; }, 1200);
+    })
+    .catch(err => {
+        msg.innerHTML = '<i class="bi bi-exclamation-circle me-2 text-danger"></i>Error al procesar.';
+        bar.classList.add('bg-danger');
+    });
+</script>
+{% endblock %}
+
