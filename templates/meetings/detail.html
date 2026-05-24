@@ -7,14 +7,38 @@
     </a>
 </div>
 
-<h2 class="fw-bold mb-4">{{ meeting.title }}</h2>
+<h2 class="fw-bold mb-1">{{ meeting.title }}</h2>
+<p class="text-muted mb-4">
+    <i class="bi bi-calendar3 me-1"></i>{{ meeting.created_at|date:"d/m/Y H:i" }}
+    <span class="ms-3">
+        {% if meeting.status == 'done' %}
+            <span class="badge bg-success">Completado</span>
+        {% elif meeting.status == 'error' %}
+            <span class="badge bg-danger">Error</span>
+        {% endif %}
+    </span>
+</p>
+
+{% if meeting.wordcloud_image %}
+<div class="card p-4 mb-4">
+    <h5 class="fw-semibold mb-3">
+        <i class="bi bi-clouds me-2"></i>Nube de palabras clave
+    </h5>
+    <img src="{{ meeting.wordcloud_image }}"
+         alt="Nube de palabras"
+         class="img-fluid rounded"
+         style="width: 100%; max-height: 260px; object-fit: contain;">
+</div>
+{% endif %}
 
 <div class="row g-4">
     <div class="col-md-6">
         <div class="card p-4 h-100">
-            <h5 class="fw-semibold mb-3"><i class="bi bi-file-text me-2"></i>Transcripción</h5>
+            <h5 class="fw-semibold mb-3">
+                <i class="bi bi-file-text me-2"></i>Transcripción
+            </h5>
             {% if meeting.transcription %}
-                <p class="text-muted">{{ meeting.transcription }}</p>
+                <p class="text-muted" style="white-space: pre-wrap;">{{ meeting.transcription }}</p>
             {% else %}
                 <p class="text-muted fst-italic">Sin transcripción todavía.</p>
             {% endif %}
@@ -22,7 +46,9 @@
     </div>
     <div class="col-md-6">
         <div class="card p-4 h-100">
-            <h5 class="fw-semibold mb-3"><i class="bi bi-stars me-2"></i>Resumen IA</h5>
+            <h5 class="fw-semibold mb-3">
+                <i class="bi bi-stars me-2"></i>Resumen IA
+            </h5>
             {% if meeting.summary %}
                 <p class="text-muted">{{ meeting.summary|linebreaks }}</p>
             {% else %}

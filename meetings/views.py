@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Meeting
 from .forms import MeetingForm
-from .ai_services import transcribe_audio, generate_summary
+from .ai_services import transcribe_audio, generate_summary,  generate_wordcloud
 
 def home(request):
     meetings = Meeting.objects.all().order_by('-created_at')
@@ -48,6 +48,10 @@ def process_meeting(request, pk):
         meeting.transcription = transcription
         summary = generate_summary(transcription)
         meeting.summary = summary if summary else "Ollama no disponible."
+
+        wordcloud_img = generate_wordcloud(transcription)    
+        meeting.wordcloud_image = wordcloud_img if wordcloud_img else ""
+        
         meeting.status = 'done'
     else:
         meeting.transcription = "Error al transcribir."

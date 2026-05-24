@@ -12,6 +12,7 @@ class Meeting(models.Model):
     # Resultados de la IA
     transcription = models.TextField(blank=True, default='')
     summary = models.TextField(blank=True, default='')
+    wordcloud_image = models.TextField(blank=True, default='')
 
     #status del procesamiento obviamente duh
     STATUS_CHOICES = [
